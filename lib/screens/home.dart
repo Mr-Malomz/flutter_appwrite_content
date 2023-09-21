@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_appwrite_content/utils.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,6 +12,31 @@ class _HomeState extends State<Home> {
   final _formKey = GlobalKey<FormState>();
   var _selected = '';
   var _dropdownItems = ["text", "json", "html"];
+  bool _isLoading = false;
+  var _contentValue = '';
+
+  _handleContentType() {
+    setState(() {
+      _isLoading = true;
+      _contentValue = '';
+    });
+    ContentService().getContentType(_selected).then((value) {
+      setState(() {
+        _isLoading = false;
+        _contentValue = value.toString();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Content retrieved successfully!')),
+      );
+    }).catchError((e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error retrieving content!')),
+      );
+    });
+  }
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,11 +109,7 @@ class _HomeState extends State<Home> {
                     child: TextButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          // If the form is valid, display a snackbar. In the real world,
-                          // you'd often call a server or save the information in a database.
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Processing Data')),
-                          );
+                          _handleContentType();
                         }
                       },
                       style: ButtonStyle(
@@ -117,7 +138,7 @@ class _HomeState extends State<Home> {
                 border: Border.all(color: Colors.blueAccent),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text("sample content"),
+              child: Text(_contentValue),
             )
           ],
         ),

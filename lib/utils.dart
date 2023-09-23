@@ -9,7 +9,7 @@ class _AppConstant {
 }
 
 class ContentService {
-  Client client = Client();
+  Client _client = Client();
 
   ContentService() {
     _init();
@@ -17,12 +17,12 @@ class ContentService {
 
   //initialize the application
   _init() async {
-    client
+    _client
         .setEndpoint(_AppConstant().endpoint)
         .setProject(_AppConstant().projectId);
 
     //get current session
-    Account account = Account(client);
+    Account account = Account(_client);
 
     try {
       await account.get();
@@ -38,7 +38,7 @@ class ContentService {
 
   Future getContentType(String selectedType) async {
     Map<String, String> data = {"type": selectedType};
-    Functions functions = Functions(client);
+    Functions functions = Functions(_client);
     try {
       var result = await functions.createExecution(
         functionId: _AppConstant().functionId,

@@ -42,9 +42,9 @@ class ContentService {
     try {
       var result = await functions.createExecution(
         functionId: _AppConstant().functionId,
-        data: jsonEncode(data),
+        headers: {'x-custom-type': jsonEncode(data)},
       );
-      return result.response;
+      return result.responseBody;
     } catch (e) {
       throw Exception('Error creating subscription');
     }

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:appwrite/appwrite.dart';
 
 class _AppConstant {
@@ -37,12 +35,16 @@ class ContentService {
   }
 
   Future getContentType(String selectedType) async {
-    Map<String, String> data = {"type": selectedType};
+    Map<String, String> contentTypes = {
+      "text": "text/plain",
+      "json": "application/json",
+      "html": "text/html"
+    };
     Functions functions = Functions(_client);
     try {
       var result = await functions.createExecution(
         functionId: _AppConstant().functionId,
-        headers: {'x-custom-type': jsonEncode(data)},
+        headers: {'Content-Type': contentTypes[selectedType]},
       );
       return result.responseBody;
     } catch (e) {
